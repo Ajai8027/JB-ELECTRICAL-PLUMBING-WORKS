@@ -1,0 +1,13 @@
+document.querySelectorAll('[data-service]').forEach(button=>button.addEventListener('click',()=>{document.querySelector('#service').value=button.dataset.service;document.querySelector('#enquiry').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});document.querySelector('#enquiry input').focus({preventScroll:true})}));
+document.querySelector('#enquiry').addEventListener('submit',event=>{event.preventDefault();const data=new FormData(event.currentTarget);const message=`Hello JB Electrical Plumbing Works,\nI would like to enquire about a service.\n\nName: ${data.get('name').trim()}\nArea: ${data.get('area').trim()}\nService: ${data.get('service')}\nDetails: ${data.get('details').trim() || 'To discuss on WhatsApp'}\n\nPlease confirm availability and estimated charges.`;document.querySelector('#status').textContent='Continue in WhatsApp and press Send to submit your enquiry. No booking is confirmed yet.';const url='https://wa.me/919841751700?text='+encodeURIComponent(message);const fallback=document.querySelector('#whatsapp-fallback');fallback.href=url;fallback.hidden=false;window.open(url,'_blank','noopener,noreferrer')});
+
+const photoDialog=document.querySelector('#photo-dialog');
+const photoButtons=[...document.querySelectorAll('[data-photo]')];let photoIndex=0;
+function displayPhoto(index){photoIndex=(index+photoButtons.length)%photoButtons.length;const button=photoButtons[photoIndex];const img=document.querySelector('#full-photo');img.src=button.dataset.photo;img.alt=button.dataset.caption;document.querySelector('#photo-caption').textContent=button.dataset.caption+' · Google business profile';document.querySelector('#photo-count').textContent=(photoIndex+1)+' / '+photoButtons.length;}
+photoButtons.forEach((button,index)=>button.addEventListener('click',()=>{displayPhoto(index);photoDialog.showModal();document.body.classList.add('viewing-photo');}));
+document.querySelector('#close-photo').addEventListener('click',()=>photoDialog.close());
+photoDialog.addEventListener('close',()=>document.body.classList.remove('viewing-photo'));
+document.querySelector('#previous-photo').addEventListener('click',()=>displayPhoto(photoIndex-1));
+document.querySelector('#next-photo').addEventListener('click',()=>displayPhoto(photoIndex+1));
+photoDialog.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();displayPhoto(photoIndex+1)}if(e.key==='ArrowLeft'){e.preventDefault();displayPhoto(photoIndex-1)}});
+photoDialog.addEventListener('click',event=>{if(event.target===photoDialog){const r=photoDialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)photoDialog.close()}});
